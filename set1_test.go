@@ -407,3 +407,12 @@ I go crazy when I hear a cymbal`
 		t.Errorf("Unexpected result %v", result)
 	}
 }
+
+func TestHammingDistance(t *testing.T) {
+	result := HammingDistance(
+		[]byte("this is a test"), []byte("wokka wokka!!!"),
+	)
+	if result != 37 {
+		t.Errorf("Unexpected distance %d", result)
+	}
+}

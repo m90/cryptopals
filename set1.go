@@ -80,3 +80,14 @@ func ScoreOptions(s []Option) Option {
 	}
 	return winner
 }
+
+func HammingDistance(a, b []byte) int {
+	var distance int
+	for i, c := range a {
+		xored := b[i] ^ c
+		for ; xored > 0; xored >>= 1 {
+			distance += int(xored & 1)
+		}
+	}
+	return distance
+}
