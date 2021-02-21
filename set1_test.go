@@ -28,26 +28,21 @@ func TestFixedXOR(t *testing.T) {
 
 func TestDeXOR(t *testing.T) {
 	input := "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
-	keys := strings.Split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
 
 	var results []Option
-	for _, key := range keys {
-		r, err := DeXOR(input, []byte(key))
+	for i := 0; i < 256; i++ {
+		r, err := DeXOR(input, rune(i))
 		if err != nil {
 			t.Fatalf("Unexpected error %v", err)
 		}
-		results = append(results, Option{r, key})
+		results = append(results, Option{r, rune(i)})
 	}
 
 	winner := ScoreOptions(results)
-	bestKey := winner.Qualifier.(string)
-	if bestKey != "X" {
-		t.Errorf("Unexpected key %s", bestKey)
-	}
+	t.Logf("Winner is %#v", winner)
 }
 
 func TestSingleCharXOR(t *testing.T) {
-	keys := strings.Split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
 	lines := `0e3647e8592d35514a081243582536ed3de6734059001e3f535ce6271032
 334b041de124f73c18011a50e608097ac308ecee501337ec3e100854201d
 40e127f51c10031d0133590b1e490f3514e05a54143d08222c2a4071e351
@@ -379,23 +374,20 @@ e03555453d1e31775f37331823164c341c09e310463438481019fb0b12fa
 
 	type combo struct {
 		input string
-		key   string
+		key   rune
 	}
 
 	var results []Option
-
 	s := bufio.NewScanner(strings.NewReader(lines))
+
 	for s.Scan() {
 		line := s.Text()
-		if len(line) != 60 {
-			continue
-		}
-		for _, key := range keys {
-			result, err := DeXOR(line, []byte(key))
+		for i := 0; i < 256; i++ {
+			result, err := DeXOR(line, rune(i))
 			if err != nil {
 				t.Fatalf("Unexpected error %v", err)
 			}
-			results = append(results, Option{result, combo{line, key}})
+			results = append(results, Option{result, combo{line, rune(i)}})
 		}
 	}
 	winner := ScoreOptions(results)

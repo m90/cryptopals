@@ -33,16 +33,16 @@ func FixedXOR(left, right string) (string, error) {
 	return hex.EncodeToString(out), nil
 }
 
-func DeXOR(input string, key []byte) (string, error) {
+func DeXOR(input string, key rune) (string, error) {
 	b, err := hex.DecodeString(input)
 	if err != nil {
 		return "", fmt.Errorf("error decoding input: %w", err)
 	}
-	var out []byte
+	var out []rune
 	for idx := range b {
-		out = append(out, key[0]^b[idx])
+		out = append(out, key^rune(b[idx]))
 	}
-	return fmt.Sprintf("%s", out), nil
+	return string(out), nil
 }
 
 func RepeatingKeyXOR(input string, key []byte) (string, error) {
@@ -54,7 +54,7 @@ func RepeatingKeyXOR(input string, key []byte) (string, error) {
 }
 
 func scoreString(s string) int {
-	isChar := regexp.MustCompile("^[aeiourstlmn\\s]$")
+	isChar := regexp.MustCompile("^[aeiou\\s]$")
 	score := 0
 	for _, char := range s {
 		if isChar.MatchString(string(char)) {
@@ -65,7 +65,7 @@ func scoreString(s string) int {
 }
 
 type Option struct {
-	Result    string
+	Item      string
 	Qualifier interface{}
 }
 
@@ -73,7 +73,7 @@ func ScoreOptions(s []Option) Option {
 	var winner Option
 	var highScore int
 	for _, str := range s {
-		score := scoreString(str.Result)
+		score := scoreString(str.Item)
 		if score > highScore {
 			winner, highScore = str, score
 		}
